@@ -1,0 +1,8 @@
+$catalog Nothing local
+class Nothing
+
+    $include constants.h
+
+    get isNothing(); return true; end;
+
+end

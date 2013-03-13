@@ -1,0 +1,15 @@
+$debug
+$catalog Room local
+class Room inherits Kind
+
+    $include dirs.h
+    
+    public sub create.object(name='', desc='') var.args
+        me->this = me
+        me->type = TYPE_ROOM
+        me->name = name
+        me->description = desc
+        me->initdirs()
+    end
+
+end

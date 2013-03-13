@@ -1,0 +1,40 @@
+$debug
+program test1
+
+    $include classlib constants.h
+
+    livingroom = object("Room", "Living Room")
+    kitchenDoor = object("Door", "Kitchen Door")
+    kitchen = object("Room", "Kitchen")
+    livingroom->east$ = kitchenDoor
+    kitchenDoor->west$ = livingroom
+    kitchenDoor->east$ = kitchen
+    kitchen->west$ = kitchenDoor
+    
+    room = livingroom
+    crt room->name()
+    crt room->description()
+    crt 
+    room->showExits()
+    crt
+    room = room->go("east")
+    crt room->name()
+    crt room->description()
+    crt 
+    if (room->east$->unlock()) then
+    end
+    if (room->east$->open()) then
+        room = room->go("east")
+    end
+    crt
+    crt room->name()
+    crt room->description()
+    crt
+    room->showExits()
+    crt
+    
+    livingroom->dispose()
+    kitchenDoor->dispose()
+    kitchen->dispose()
+    
+end

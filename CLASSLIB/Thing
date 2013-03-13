@@ -1,0 +1,28 @@
+$catalog Thing local
+class Thing inherits Kind
+
+    private openable, portable, enterable
+
+    $include constants.h
+
+    get openable(); return openable; end;
+    set openable(value); openable = value; end;
+    
+    get portable(); return portable; end;
+    set portable(value); portable = value; end;
+    
+    get enterable(); return enterable; end;
+    set enterable(value); enterable = value; end;
+
+    public sub create.object(name='', desc='') var.args
+        me->this = me
+        me->type = TYPE_THING
+        me->name = name
+        me->description = desc
+        
+        openable = false
+        portable = false
+        enterable = false
+    end
+    
+end

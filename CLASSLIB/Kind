@@ -1,0 +1,100 @@
+**
+** The most basic "Kind" of object in the IF world.  Everything else is derived from Kind.
+**
+$debug
+$catalog Kind local
+class Kind
+
+    **
+    ** Make all properties private and use get/set methods to work with them.  This allows them
+    ** to work as expected in all subclasses of Kind.  Otherwise, they are not directly accessible
+    ** by instances of subclasses.
+    **
+    private uuid, name, description, type, this
+    
+    $include constants.h
+    
+    **
+    ** get/set methods for properties.  Exposes them as public and gives them additional names
+    ** to be known by if needed.
+    **
+    get uuid(); return uuid; end;
+    
+    get name(); return name; end;
+    set name(value); name = value; end;
+    
+    get description(); return description; end;
+    set description(text); description = text; end;
+    get desc(); return description; end;
+    set desc(text); description = text; end;
+    
+    get type(); return type; end;
+    set type(value); type = value; end;
+    
+    get this(); return this; end;
+    set this(obj); this = obj; end;
+
+    **
+    ** Standard methods for doing things other than getting or setting a properties value.
+    **
+    public sub create.object()
+        uuid = system(1047)
+        type = TYPE_KIND
+    end
+
+    **
+    ** Standard fail message for use in subclasses.  Instead of merely returning false will
+    ** dislay a message, then return false.
+    **
+    public function fail(message)
+        crt message
+        return false
+    end
+    
+    **
+    ** Standard pass message for use in subclasses.  Instead of merely returning true will
+    ** display a message, then return true.
+    **
+    public function pass(message)
+        crt message
+        return true
+    end
+    
+    **
+    ** Used for testing purposes to see if an object is set to the Nothing object.  The
+    ** Nothing class only has this one method and it returns true, for all other objects
+    ** this method should return false to indicated that it is not Nothing.
+    **
+    get isNothing(); return false; end;
+    
+    **
+    ** Undefinded methods to be used instead of default errors from the runtime.  This will
+    ** allow a message but the game will still continue to run.
+    ** 
+    ** Override these in subclasses if you wish to send a more appropriate message.
+    **
+    public sub undefined()
+        crt "I don't know how to do that!"
+    end
+    
+    public function undefined()
+        crt "I don't know how to do that!"
+        return this
+    end
+    
+    **
+    ** Default destructor.
+    **
+    public sub destroy.object()
+    end
+    
+    **
+    ** Kind destructor, used to destory all Kinds because of the this property that will
+    ** prevent the object system from releasing the subclassed objects.
+    **
+    public sub dispose()
+        crt "disposing object " : this->name()
+        this = ''
+    end
+    
+end

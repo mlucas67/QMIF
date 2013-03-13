@@ -1,0 +1,62 @@
+$debug
+$catalog Door local
+class Door inherits Kind
+
+    private openable, isOpen, lockable, isLocked
+    
+    $include dirs.h
+    
+    get openable(); return openable; end;
+    set openable(value); openable = value; end;
+    
+    get isOpen(); return isOpen; end;
+    set isOpen(value); isOpen = value; end;
+    
+    get lockable(); return lockable; end;
+    set lockable(value); lockable = value; end;
+    
+    get isLocked(); return isLocked; end;
+    set isLocked(value); isLocked = value; end;
+    
+    public sub create.object(name='', desc='') var.args
+        me->this = me
+        me->type = TYPE_DOOR
+        me->name = name
+        me->description = desc
+        me->initdirs()
+        openable = true
+        isOpen = false
+        lockable = false
+        isLocked = false
+    end
+
+    public function unlock()
+        if not(lockable) then return me->fail("This door does not have a lock on it.")
+        if not(isLocked) then return me->fail("It's already unlocked")
+        isLocked = false
+        return me->pass("You unlock the door.")
+    end
+    
+    public function lock()
+        if not(lockable) then return me->fail("This door does not have a lock on it.")
+        if (isLocked) then return me->fail("The door is already locked.")
+        isLocked = true
+        return me->pass("You lock the door.")
+    end
+    
+    public function open()
+        if (isLocked) then return me->fail("The door is unlocked.")
+        if not(openable) then return me->fail("The door refuses to open.")
+        if (isOpen) then return me->fail("The door is already open.")
+        isOpen = true
+        return me->pass("You open the door.")
+    end
+    
+    public function close()
+        if not(isOpen) then return me->fail("The door is already closed.")
+        if not(openable) then return me->fail("You are unable to close the door.")
+        isOpen = false
+        return me->pass("You close the door.")
+    end
+    
+end
