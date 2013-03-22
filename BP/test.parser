@@ -1,0 +1,5 @@
+parser = object("Parser")
+
+tokens = parser->split(\The Bathroom is a room.  "This [noun] really needs a good cleaning.  'It's cold up here.' Wow we sure are high." [This is a comment] It is east of the Kitchen.  The description of the Bathroom is "Yuck!"\)
+crt tokens
+end

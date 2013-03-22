@@ -1,0 +1,36 @@
+$debug
+$catalog Region local
+class Region inherits Kind
+
+    private roomList(1), rooms
+
+    $include constants.h
+
+    get rooms(); return rooms; end;
+    set rooms(value); rooms = value; end;
+
+    get roomList(room); return roomList(room); end;
+    set roomList(room, value); roomList(room) = value; end;
+
+    set addRoom(room) 
+        me->rooms = me->rooms + 1
+        redim roomList(me->rooms)
+        roomList(me->rooms) = room
+    end
+    
+    public sub create.object(name='', desc='') var.args
+        me->this = me
+        me->type = TYPE_REGION
+        me->name = name
+        me->description = desc
+        me->rooms = 0
+        me->roomList(1) = Nothing
+    end
+    
+    public sub dispose()
+        for i = 1 to me->rooms
+            me->roomList(i)->dispose()
+        next i
+    end
+
+end

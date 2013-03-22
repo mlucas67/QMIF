@@ -1,0 +1,61 @@
+$debug
+program Simple
+
+    $include classlib constants.h
+
+    g1 = object("Region", "The Bathroom")
+    g2 = object("Region", "The Bedroom")
+    
+    debug
+    
+    r1 = object("Room", "The Lavatory"); r1->region = g1;
+    r2 = object("Room", "Next to the Jacuzzi"); r2->region = g1;
+    r3 = object("Room", "Next to the shower stall"); r3->region = g1;
+    r4 = object("Room", "A small room with a toilet"); r4->region = g1;
+    r5 = object("Room", "The shower stall"); r5->region = g1;
+    r6 = object("Room", "The north end of the closet"); r6->region = g1;
+    r7 = object("Room", "The NW corner of the bedroom"); r7->region = g2;
+    
+    d1 = object("Door", "The bathroom door")
+    d2 = object("Door", "The shower door")
+    d3 = object("Door", "The toilet door")
+    d4 = object("Door", "The closet door")
+    
+    r1->south$ = d1; r1->north$ = r2; r1->northeast$ = r3;
+    r2->south$ = r1; r1->east$ = r3;
+    r3->south$ = d3; r3->north$ = d2; r3->west$ = r3; r3->east$ = d4; r3->southwest$ = r1;
+    r4->north$ = d3;
+    r5->south$ = d2;
+    r6->west$ = d4;
+    r7->north$ = d1;
+    
+    room = r1
+    crt room->name()
+    crt room->description()
+    crt 
+    room->showExits()
+    crt
+    room = room->go("east")
+    crt room->name()
+    crt room->description()
+    crt 
+    if (room->east$->unlock()) then
+    end
+    if (room->east$->open()) then
+        room = room->go("east")
+    end
+    crt
+    crt room->name()
+    crt room->description()
+    crt
+    room->showExits()
+    crt
+    
+    g1->dispose()
+    g2->dispose()
+    d1->dispose()
+    d2->dispose()
+    d3->dispose()
+    d4->dispose()
+    
+end

@@ -1,0 +1,127 @@
+$catalog Parser local
+class Parser
+
+    private tokens, token, lcToken, lastDelim
+
+    public sub create.object()
+        tokens = ''
+    end
+
+    public sub getToken()
+        if (lastDelim = 0) then token = ''; return
+        remove token from tokens setting lastDelim
+        lcToken = downcase(token)
+        return
+    end
+    
+    public function parse(line)
+        tokens = me->split(line)
+        return me->rule()
+    end
+    
+    public function rule()
+        definition = me->definition()
+        if (definition # '') then return definition
+        preamble = me->preamble()
+        if (preamble = '') then return ''
+        colon_comma = token
+        if (colon_comma = ',') then phrases = me->phrase() else phrases = me->phrases()
+        return preamble : colon_comma : phrases
+    end
+   
+    public function definition()
+        if (lcToken # 'definition') return ''
+        definition = token
+        me->getToken()
+        colon = token
+        if (colon # ':') then return "Unable to parse definition.  Expected a ':' after keyword 'definition'."
+        me->getToken()
+        if not(lcToken matches "'a'ý'an'") then return "Unable to parse definition.  Expected 'a' or 'an' after ':'."
+        a_an = token
+        me->getToken()
+        kind = ''
+        loop
+        while ((lcToken # '') and (lcToken # 'is'))
+            if (kind = '') then kind = token else kind := ' ' : token
+            me->getToken()
+        repeat
+        if (lcToken # 'is') then return "Unable to parse definition.  Expected keyword 'is' after kind '" : kind : "'."
+        is = token
+        me->getToken()
+        newName = ''
+        loop
+        until ((lcToken = '') or (lcToken matches "'if'ý'unless'"))
+            if (newName = '') then newName = token else newName := ' ' : token
+            me->getToken()
+        repeat
+        if not(lctoken matches "'if'ý'unless'") then return "Unable to parse definition.  Expected 'if' or 'unless' after '" : newName : "'."
+        if_unless = token
+        me->getToken()
+        condition = me->condition()
+        if (condition # '') then return definition : colon : ' ' : a_an : ' ' : kind : ' ' : newName : ' ' : if_unless : ' ' : condition
+        
+    end
+    
+    public function preamble()
+    end
+    
+    public function phrases()
+    end
+    
+    public function phrase()
+    end
+   
+    public function split(line)
+        words = ''
+        lastCh = ''
+        inquote = @false
+        incomment = @false
+        length = len(line)
+        for i = 1 to length
+            ch = line[i,1]
+            begin case
+                case (inquote)
+                    if (ch = '"') then
+                        if (lastCh = "'") then words := '"'
+                        words := '\'
+                        words := if (lastCh matches \'.'ý'!'ý'?'\) then @fm else @vm
+                        inquote = @false
+                    end else
+                        begin case
+                            case ((lastCh = ' ') and (ch = "'"))
+                                words := '"'
+                                ch = ''
+                            case ((lastCh = "'") and (ch = ' '))
+                                words := '" '
+                                ch = ''
+                            case (lastCh = "'")
+                                words := lastCh : ch
+                                ch = ''
+                            case (ch = "'")
+                                null
+                            case 1
+                                words := ch
+                        end case
+                    end
+                case (incomment)
+                    if (ch = ']') then incomment = @false
+                case (ch = '[')
+                    incomment = @true
+                case (ch = '"')
+                    words := '\'
+                    inquote = @true
+                case (ch = '.')
+                    words := @fm
+                case (ch = ' ')
+                    if not(lastCh matches \'.'ý'!'ý'?'ý' 'ý'"'ý']'\) then words := @vm
+                case (ch matches \':'ý';'\)
+                    words := @vm : ch
+                case 1
+                    words := ch
+            end case
+            lastCh = ch
+        next i
+        return words
+    end
+
+end

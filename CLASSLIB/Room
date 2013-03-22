@@ -2,7 +2,12 @@ $debug
 $catalog Room local
 class Room inherits Kind
 
+    private region
+
     $include dirs.h
+   
+    get region(); return region; end;
+    set region(value); region = value; value->addRoom(me); end;
     
     public sub create.object(name='', desc='') var.args
         me->this = me
